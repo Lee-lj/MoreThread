@@ -1,0 +1,77 @@
+并发:一个资源被多个线程同时操作(秒杀，抢票，两个银行同时取钱，可以通过排队(一万个人排好队，前几个人有票)来解决)
+
+处理多线程时，多个线程访问同一个资源，并且某些线程还想修改这个资源，此时就需要线程同步
+线程同步其实就是一种等待机制，多个需要同时访问此资源的线程进入这个(对象的等待池)，形成队列，等待前面线程使用完毕，然后下一个线程再使用这个资源
+
+处理并发时除了队列，还需要锁，锁机制(synchronized)用来保证线程安全(每个对象都拥有一把锁)
+
+为了保证数据在方法中被访问时的正确性，访问时需要加入锁机制(synchronized),当一个线程获得对象的排他锁，独占这个资源，其他线程必须等待，
+直到这个线程使用完毕资源，释放了锁，但是这样又产生了下列问题:
+                1.一个线程持有锁会导致其他所有需要此锁的线程挂起
+                2.在多线程竞争下，加锁，释放锁会导致比较多的上下文切换和调度延时，产生性能问题
+                3.如果一个优先级高的线程等待一个优先级低的线程释放锁，会导致优先级倒置，引起性能问题(小号几秒钟得等前面大号十几分钟)
+                
+通过private关键字保证数据对象只能被方法访问，只需要针对方法做出一套机制，这套机制就是synchronized关键字
+它包含两种用法:synchronized方法和synchronized块
+同步方法:public synchronized void method(int args){}
+
+synchronized方法控制对对象的访问，每个对象对应一把锁,每个synchronized方法都必须获得调用该方法的对象的锁才能执行,否则线程会阻塞
+方法一旦执行，就独占该锁，直到该方法返回才释放锁，后面被阻塞的线程才能获得这个锁，继续执行
+缺陷:将一个大的方法声明为synchronized会影响效率。                            
+所以方法里面需要修改的内容才需要锁，锁的太多会浪费资源
+
+synchronized块:
+synchronized(Obj){}
+Obj称为同步监视器，Obj可以是任何对象，但是推荐使用共享的资源作为同步监视器(Obj就是要进行增删改的对象)
+同步方法中无需指定同步监视器，因为同步方法的同步监视器就是this，是这个对象本身，或者是class
+
+同步监视器的执行过程:
+1.第一个线程访问，锁定同步监视器，执行其中代码
+2.第二个线程访问，发现同步监视器被锁定，无法访问
+3.第一个线程访问完毕，释放同步监视器的锁定
+4.第二个线程访问，发现同步监视器没有锁，然后锁定并访问
+
+synchronized重点是要设置锁的对象(例如要在银行取钱，给银行上锁，让他们在取钱这一步排队)
+synchronized默认锁的是当前的this
+
+synchronized块示例:,对ac银行账户添加了锁，让取钱的方法位于synchronized块中
+//取钱
+	@Override
+	public void run() {
+		
+		synchronized(ac) {//对银行账户添加锁
+			//判断能取出足够的钱吗,不够就直接退出
+			if(ac.account<getMoney) {
+				System.out.println(Thread.currentThread().getName()+"->账户余额不足");
+				return;
+		    }
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ac.account=ac.account-getMoney;//卡里的钱
+			total=total+getMoney;
+			System.out.println(ac.name+";还剩"+ac.account);
+			//System.out.println(this.getName)等价于System.out.println(Thread.currentThread().getName());因为继承了thread类，thread中含有getname方法
+		    System.out.println(this.getName()+"手里有"+total);};
+		    
+		    
+Synchronized方法默认锁的是这个类本身，sychronized(xx){}块可以锁任何对象,xx一定要锁要操作的资源(变化的量，需要增删改的操作)
+Synchronized方法:
+private synchronized void buy() {
+		//判断是否有票
+		if(ticketNum<=0) {
+			flag=false;
+			return;
+		}
+		
+Synchronized块:
+synchronized(list) {//对集合进行锁，保证排队，不会多个操作覆盖一个空间
+		for(int i=0;i<1000;i++) {
+			new Thread(()->{
+				list.add(Thread.currentThread().getName());
+			}).start();
+			System.out.println(list.size());//添加1000条数据，等于1000的话说明集合线程安全，否则不安全
+		   }

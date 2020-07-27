@@ -1,0 +1,25 @@
+JDK5开始，Java提供强大的线程同步机制-通过显示定义同步锁对象来实现同步，同步锁使用lock对象充当
+java.util.concurrent.locks.Lock接口是控制多个线程对共享资源访问的工具，锁提供了对共享资源的独占访问，每次只能有一个线程
+对Lock对象加锁，线程开始访问共享资源之前应先获得Lock对象
+
+ReentrantLock(可重入锁)类实现了Lock，它拥有与synchronized相同的并发性和内存语义。在实现线程安全的控制中，常用ReentrantLock，
+因为其可以显式加索释放锁。
+
+加lock锁:
+
+class A{
+    //不加lock锁线程不安全，定义lock锁
+	private final ReentrantLock locks=new ReentrantLock();
+	
+	private void m(){
+	    locks.lock();//加锁
+	    
+	    try{
+            xxxxx执行代码(线程加了锁，所以安全)
+	    }finally{
+	       //解锁,加锁之后就相当于在排队
+	     locks.unlock();
+	     //如果同步代码有异常，将unlock写入finally块
+	    }
+	}
+}	

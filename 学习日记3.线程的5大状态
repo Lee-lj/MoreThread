@@ -1,0 +1,56 @@
+线程的5大状态:
+
+1.创建状态，new一个线程就创建了，创建好后启动该线程就进入就绪状态，等待CPU调度
+2.就绪状态:启动了线程，同时解除了线程的阻塞状态，因为CPU不断切换运行的进程，使看起来同时运行多个进程，
+                       所以一个运行状态的进程被切换后释放CPU，回到就绪状态
+3.运行状态:就绪状态的线程获得CPU资源，线程正在运行，此时才真正运行代码块
+4.阻塞状态:运行状态的线程等待用户输入，线程休眠的情况(调用sleep，wait或同步锁定时)，进入阻塞状态，阻塞时间解除后进入就绪状态
+5.死亡状态:线程自然运行结束，或者外部干涉终止了线程
+
+线程的方法:
+   1.setPriority(int newPriority)改变线程的优先级
+   2.static void sleep(long mills) 让当前执行的线程休眠指定的一段毫秒时间
+   3.void join() 等待该线程终止再执行其他线程(线程插队，执行这个插队线程)
+   4.static void yield() 暂停当前正在执行的线程对象，正在进行的线程暂停转为就绪状态，和礼让线程位于同一起跑线，cpu重新开始调度(线程礼让)
+   5.void interrupt() 中断线程(停止线程)
+   6.boolean IsAlive() 判断线程是否处于活动状态
+   
+   停止线程:不建议使用JDK提供的stop(),destory()方法(已废弃)，推荐让线程自己停止下来，建议使用一个标志位进行终止变量，当flag=false，终止线程运行
+   
+   休眠线程:sleep
+   sleep(毫秒)指定阻塞当前线程的毫秒时间
+   sleep存在异常InterruptedException
+   sleep时间结束后线程进入就绪状态
+   sleep可以模拟网络延时，倒计时等
+       每一个对象都有一个锁，sleep不会释放这个锁对象
+       
+     线程礼让:yield
+      礼让线程，让当前正在执行的线程暂停，但不阻塞
+      将线程从运行状态转为就绪状态
+      让CPU重新调度(所有线程在同一个起跑线),礼让不一定成功，看CPU心情
+      
+            老王->线程开始执行
+            隔壁->线程开始执行
+            隔壁->线程停止执行
+            老王->线程停止执行
+            
+//测试礼让线程，礼让不一定成功，看CPU心情
+public class Testyield {
+	public static void main(String[] args) {
+		threadYield ty=new threadYield();
+		new Thread(ty,"隔壁").start();
+		new Thread(ty,"老王").start();
+	}
+}
+
+class threadYield implements Runnable{
+	@Override
+	public void run() {
+		System.out.println(Thread.currentThread().getName()+"->线程开始执行");
+		Thread.yield();
+		System.out.println(Thread.currentThread().getName()+"->线程停止执行");
+	}
+}
+      强制线程执行:join
+       join合并线程，等待此线程执行完再执行其他线程，其他线程阻塞。线程中的VIP，就是插队
+     

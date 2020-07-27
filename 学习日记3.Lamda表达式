@@ -1,0 +1,85 @@
+Lambda表达式，避免匿名内部类过多，实质属于函数编程的概念，可以使代码看起来更加简洁，去掉了没有意义的代码，只留下了核心的逻辑
+简化花括号时(只有一行代码的情况才能省略花括号，有多行代码就是用代码块(花括号))
+使用lamda表达式的前提是接口为函数式接口(只有一个抽象方法)
+如果输入不是一个参数而是多个参数的话，不能省略参数的括号，但是可以去掉全部参数类型，全部去掉或全部保留
+
+先定义一个接口的对象，然后直接lamda表达式
+ccc a=null;
+lamda表达式
+
+(params)->expression[表达式]
+(params)->statement[语句]
+(params)->{statement}
+
+例如new Thread(()->System.out.println("开心")).start();//中间为lambda表达式
+
+Lambda表达式的关键:Functional Interface(函数式接口)
+
+Functional Interface(函数式接口)的定义:
+        1.任何接口，如果只包含唯一一个抽象方法，那他就是一个函数式接口
+                                     例如:public interface Runnable(){
+                        public abstract void run();              
+                        }这就只包含了一个抽象方法，就是函数式接口
+        2.对于函数式接口，可以通过lambda表达式创建该接口的对象
+        
+public class TestLamda2 {
+
+	public static void main(String[] args) {
+		ccc h=new offer();
+		h.go(10);
+
+	}
+
+}
+interface ccc{
+	void go(int a);
+}
+
+class offer implements ccc{
+	@Override
+	public void go(int a) {
+		for(int i=0;i<a;i++) {
+			System.out.println("offer+"+i);
+		}
+	}
+}
+外部类的写法，下面转换为lamda表达式的写法:
+public class TestLamda2 {
+	
+	public static void main(String[] args) {
+		
+		
+		//1.lamda表达式
+		ccc h=(int a)-> {
+				for(int i=0;i<a;i++) {
+					System.out.println("offer+"+i);
+				}
+			};
+		h.go(10);
+		
+		//2.继续简化lamda表达式,省略了传入的参数的类型
+		ccc h1=(a)->{
+			for(int i=0;i<a;i++) {
+				System.out.println("入职+"+i);
+			}
+		};
+		h1.go(10);
+		
+		//3.继续简化，省略括号
+		ccc h2=a->{
+			for(int i=0;i<a;i++) {
+				System.out.println("入职成功+"+i);
+			}
+		};
+		h2.go(10);
+		
+		//4.简化花括号
+		ccc h3=a-> System.out.println("入职成功了+"+a);
+		h3.go(1);
+	}
+}
+
+interface ccc{
+	void go(int a);
+}直接实现业务逻辑
+

@@ -1,0 +1,29 @@
+线程的三种创建方式:         线程不一定会立即执行，CPU会安排调度顺序
+第一种方式:继承Thread类
+第二种方式:实现Runnable接口
+第三种方式:实现Callable接口
+
+    第一种方式:1.类继承Thread类
+          2.重写run()方法，编写线程执行体
+          3.创建线程对象，调用start()方法启动线程
+          
+          不建议使用继承Thread类，避免OOP单继承的局限性
+          
+     第二种方式:1.定义类实现Runnable接口，
+     2.实现run()方法，编写线程执行体，
+     3.创建线程对象，执行线程需要丢入runnable接口实现类，然后调用Start来启动线程
+      
+       建议使用实现Runnable接口，避免了单继承的局限性，灵活方便，方便同一个对象被多个线程使用
+       
+     第二种跟第一种的区别:new Thread(testrunnable).start();需要thread对象转接实现Runnable的类
+        
+       第三种方式:实现Callable接口:
+       1.实现Callable接口，需要返回值类型
+       2.重写call方法，需要抛出异常
+       3.创建目标对象
+       4.创建执行服务(开启服务):ExecutorService ser=Executors.newFixedThreadPool(1)
+       5.提交执行:Future<Boolean> result1=ser.submit(t1);
+       6.获取结果:boolean ri=result1.get();
+       7.关闭服务:ser.shutdownNow();
+       
+       实现Callable接口的好处:可以定义返回值，可以抛出异常，但是实现步骤稍微复杂

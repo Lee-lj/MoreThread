@@ -1,0 +1,23 @@
+问题:经常创建和销毁，使用量非常大的资源，比如并发情况下的线程，对性能影响很大
+
+解决思路:
+提前创建好多个线程，放入线程池中，使用时直接获取，使用完线程放回线程池中，可以避免频繁的创建，销毁  
+实现线程的重复利用，例如生活中的交通工具，只建造一次，后面光用
+
+建造线程池的好处:
+   1.提高响应速度(减少了创建新线程的时间)
+   2.降低资源消耗(重复利用线程池中的线程，不需要每次都新建)
+   3.便于线程管理
+   
+   线程池的设置:
+   1.corePoolSize:核心池的大小
+   2.maximumPoolSize:最大线程数(多少个线程)
+   3.keepAliveTime:线程没有任务时最多保持多长时间后停止
+ 
+线程池相关API:ExecutorService和Executors
+   ExecutorService:真正的线程池接口，常见子类ThreadPoolExecutor
+        1.void execute(Runnable command):执行任务/命令,没有返回值,一般用来执行Runnable(execute执行Runnable，submit执行callable)
+        2.<T>Future<T>submit(Callable<T> task):执行任务，有返回值，一般用来执行Callable
+        3.void shutdown():关闭连接池
+        
+   Executors:工具类和线程池的工厂类，用于创建并返回不同类型的线程池
